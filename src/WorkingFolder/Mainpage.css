@@ -1,0 +1,274 @@
+
+.main-page{
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    /* background-image: linear-gradient(
+        rgba(0, 0, 0, 0.3), 
+        rgba(0, 0, 0, 0.8)
+      ),url(../../public/Images/mistbackground.gif); */
+      background-image: 
+      linear-gradient(
+        rgba(36,52,60,0.5), 
+        rgba(36,52,60,0.8)
+      ),
+      url(../../public/Images/balancescale.png)
+      ,url(../../public/Images/mistbackground.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: auto, auto, cover;
+}
+
+.playerbanner-box{
+    margin-top: 15vh;
+    padding: 0 5% 0 5%;
+    display: flex;
+    justify-content: space-between;
+    opacity: 1;
+    transition: all 1s ease;
+}
+
+.playerbanner{
+    position: relative;
+    width: 11%;
+    padding: 0 0.5% 0 0.5%;
+    transition: all 1s;
+    align-items: center;
+    height: 65vh;
+    opacity: 1;
+    transition: all 1s;
+}
+
+.playerbanner-portrait{
+    margin-top: 2vh;
+    max-height: 320px;
+    border: 3px solid rgba(213,239,216,255);
+    background-color: aliceblue;
+    overflow: hidden;
+    filter: brightness(100%);
+    transition: all 1s;
+}
+
+.playerbanner-portrait > img{
+    object-fit: contain;
+    width: 100%;
+}
+
+.darken{
+    filter: brightness(30%);
+    transition: all 1s;
+}
+
+.moveup{
+    transform: translate(0,-20px);
+}
+
+.movedown{
+    transform: translate(0,20px);
+}
+
+.playerbanner-scorebox{
+    height: 20%;
+    position: absolute;
+    top: -18%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.playerbanner-score{
+    height: 50%;
+    width: 50%;
+    margin-top: 10%;
+    text-align: center;
+    font-size: 7vh;
+    color: rgba(213,239,216,255);
+    opacity: 1;
+    transition: all 1s ease 1s;
+}
+
+.hide{
+    opacity: 0;
+    transition: all 1s;
+}
+
+.wintext{
+    position: absolute;
+    font-size: 7vh;
+    opacity: 1;
+    top: -28%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Archivo Black', sans-serif;
+    color: rgba(213,239,216,255);
+    opacity: 0;
+    transition: all 1s;
+}
+
+.show{
+    opacity: 1;
+    transition: all 1s;
+}
+
+.redtext{
+    color: rgb(125, 17, 17);
+}
+
+.playerbanner-numberbox{
+    margin: 7vh auto;
+    height: 30%;
+    width: 80%;
+    opacity: 1;
+    transition: all 1s ease 1s;
+}
+
+.playerbanner-number{
+    height: 50%;
+    width: 100%;
+    margin: auto;
+    margin-top: 10%;
+    background-color: rgba(213,239,216,255);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 6vh;
+}
+
+@keyframes flip-x-animation{
+    0% {
+        Opacity: 1;
+    }
+    50%{
+        Opacity: 0;
+    }
+    100%{
+        Opacity: 1;
+    }
+}
+
+.flip-x{
+    animation: flip-x-animation 1s;
+}
+.redwin{
+    outline: 5px solid rgba(161,42,45,255);
+    transition: all 1s;
+}
+
+.glow-border {
+    animation: glow 2s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+  }
+  
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 0 0 rgba(161,42,45,255);
+    }
+    100% {
+      box-shadow: 0 0 10px 5px rgba(161,42,45,255);
+    }
+  }
+  
+.corner-text{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-family: 'Archivo Black', sans-serif;
+    color: rgba(213,239,216,255);
+    opacity: 0.3;
+    font-size: 12vh;
+}
+
+.kotaebox{
+    position: absolute;
+    bottom: 12vh;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(213,239,216,255);
+    height: 12vh;
+    width: 25vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 8vh;
+    opacity: 1;
+    transition: all 1s ease;
+}
+
+.kotae{
+    position: absolute;
+    left: -70%;
+    font-size: 8vh;
+    color: rgba(213,239,216,255);
+}
+
+.submit-text{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 55%;
+    font-family: 'Archivo Black', sans-serif;
+    color: rgba(213,239,216,255);
+    font-size: 3vh;
+    transition: all 1s;
+    opacity: 1;
+}
+
+.rules{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10vh;
+    font-size: 8vh;
+    color: rgba(213,239,216,255);
+    opacity: 1;
+    transition: all 1s ease;
+}
+
+.congrat-background{
+    background-image: url(../../public/Images/blood.png);
+    transition: all 1s ease;
+}
+
+.congrat-page{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
+    font-size: 8vh;
+    top: 26vh
+}
+
+.congrat-page p{
+    display: flex;
+    justify-content: center;
+}
+
+.congrat-page-image{
+    position: absolute;
+    max-height: 200px;
+    left: 50%;
+    top: -10vh;
+    transform: translateX(-50%);
+}
+
+.hide {
+    opacity: 0;
+}
+
+.timer {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8vh;
+    color: rgba(213,239,216,255);
+    font-weight: bold;
+    transition: all 1s;
+}
+
