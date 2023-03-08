@@ -30,7 +30,7 @@ const MainPage = () => {
 
   const [OriginalState, setOriginalState] = React.useState([...Animation]);
 
-  const [GameState, setGameState] = React.useState("rule_phase");
+  const [GameState, setGameState] = React.useState("connect_phase");
   // connect_phase รอผู้เล่น connect
   // round_phase grace period portrait ไม่มี animation
   // submit_phase รอผู้เล่น submit
