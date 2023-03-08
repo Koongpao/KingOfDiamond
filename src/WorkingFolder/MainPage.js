@@ -68,24 +68,24 @@ const MainPage = () => {
     const fetchData = async () => {
       const response = await fetch(filePath);
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
 
-      if (data.WA !== undefined) {
+      if (data.WA !== null) {
         RCWinner.current = data.WA;
       }
       // HANDLE WA (WINNER ARRAY)
 
-      if (data.G !== undefined) {
+      if (data.G !== null) {
         setG(data.G);
       }
       // HANDLE G (GAME START)
 
-      if (data.Avg !== undefined) {
+      if (data.Avg !== null) {
         setRCKotae(data.avg);
       }
       //HANDLE AVG (NUMBER OR KOTAE)
 
-      if (data.Sm !== undefined) {
+      if (data.Sm !== null) {
         RCNumber.current = data.Sm;
         RCNumber.current.forEach((item, i) => {
           setPlayerInfo((prev) => {
@@ -94,17 +94,18 @@ const MainPage = () => {
               ...newPlayerInfo[i],
               number: RCNumber.current[i],
             };
+            return newPlayerInfo;
           });
         });
       }
       //HANDLE SM (SUBMIT NUMBER)
 
-      if (data.S !== undefined) {
+      if (data.S !== null) {
         RCScore.current = data.S;
       }
       //HANDLE S (SCORE)
 
-      if (data.C !== undefined) {
+      if (data.C !== null) {
         RCConnected.current = data.C;
         RCConnected.current.forEach((item, i) => {
           if (item === 1) {
@@ -436,7 +437,6 @@ const MainPage = () => {
       await State_Congratulation();
       // EXIT TO CONGRAT PHASE
     } else {
-
       if (NumberAlive.current < PrevNumberAlive.current) {
         const NewRules = Array.from(
           { length: PrevNumberAlive.current - NumberAlive.current - 1 },
@@ -479,13 +479,13 @@ const MainPage = () => {
   }, [G]);
 
   const State_Congratulation = async () => {
-    setGameState("none")
+    setGameState("none");
     await Delay(2);
     setGameState("congrat_phase");
     IsAlive.current.forEach((item, i) => {
       if (item) {
-        console.log(item)
-        console.log(item.alive, i)
+        console.log(item);
+        console.log(item.alive, i);
         setPlayerCongrat(i);
       }
     });
@@ -599,8 +599,12 @@ const MainPage = () => {
         })}
       </div>
       <div className={Return_CongratText()}>
-        <img className="congrat-page-image"src={Players[PlayerCongrat].image} alt="winner"/>
-        <p style={{marginTop: "25vh"}}>GAME クリア </p>
+        <img
+          className="congrat-page-image"
+          src={Players[PlayerCongrat].image}
+          alt="winner"
+        />
+        <p style={{ marginTop: "25vh" }}>GAME クリア </p>
         <p>こんごらつちゅれいらしよん</p>
       </div>
     </div>
