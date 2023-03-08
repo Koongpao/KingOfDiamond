@@ -223,7 +223,7 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    top: 10vh;
+    top: -2vh;
     font-size: 8vh;
     color: rgba(213,239,216,255);
     opacity: 1;

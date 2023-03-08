@@ -30,7 +30,7 @@ const MainPage = () => {
 
   const [OriginalState, setOriginalState] = React.useState([...Animation]);
 
-  const [GameState, setGameState] = React.useState("connect_phase");
+  const [GameState, setGameState] = React.useState("rule_phase");
   // connect_phase รอผู้เล่น connect
   // round_phase grace period portrait ไม่มี animation
   // submit_phase รอผู้เล่น submit
@@ -58,7 +58,7 @@ const MainPage = () => {
   const RCConnected = React.useRef([0, 0, 0, 0, 0]);
   const [G, setG] = React.useState(0);
   const RCNumber = React.useRef([5, 4, 3, 2, 1]);
-  const RCScore = React.useRef([1, 0, 0, 0, 0]);
+  const RCScore = React.useRef([1, 1, 1, 1, 1]);
   const [RCKotae, setRCKotae] = React.useState(0);
   const RCWinner = React.useRef([1, 0, 0, 0, 0]);
 
