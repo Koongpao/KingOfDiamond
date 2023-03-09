@@ -141,36 +141,36 @@ const MainPage = () => {
 
   // END RECEIVED DATA SECTIONS
 
-  const [Timer, setTimer] = React.useState(5 * 1000);
-  const [isRunning, setIsRunning] = React.useState(false);
+  const [time, setTime] = React.useState(30.0);
+  const [paused, setPaused] = React.useState(true);
 
   React.useEffect(() => {
-    let TimerInterval;
-    if (isRunning) {
-      TimerInterval = setInterval(() => {
-        setTimer((prevTime) => prevTime - 10);
+    let intervalId;
+
+    if (!paused) {
+      intervalId = setInterval(() => {
+        setTime((prevTime) => {
+          const newTime = prevTime - 0.01;
+          return newTime < 0 ? 0 : newTime;
+        });
       }, 10);
     }
-    if (Timer === 0) {
-      clearInterval(TimerInterval);
-      setIsRunning(false);
-    }
-    return () => clearInterval(TimerInterval);
-  }, [isRunning, Timer]);
 
-  const ResetTimer = () => {
-    setTimer(5 * 1000);
-  };
+    return () => clearInterval(intervalId);
+  }, [paused]);
 
-  const formatTime = () => {
-    const milliseconds = Timer % 1000;
-    const seconds = Math.floor(Timer / 1000);
-    const formattedMilliseconds = Math.floor(milliseconds / 10)
-      .toString()
-      .padStart(2, "0");
-    const formattedSeconds = seconds.toString().padStart(2, "0");
-    return `${formattedSeconds}.${formattedMilliseconds}`;
-  };
+  const startTimer = () => {
+    setPaused(false);
+  }
+
+  const stopTimer = () => {
+    setPaused(true);
+  }
+
+  const resetTimer = () => {
+    setTime(30.0);
+    setPaused(true);
+  }
 
   // Animation and Calculation Section //
 
@@ -305,10 +305,10 @@ const MainPage = () => {
     return `rgba(${red}, ${green}, ${blue}, 255)`;
   };
 
-  const Return_TimerColor = (i) => {
-    const red = Math.round(213 - ((213 - 204) * (5000 - Timer)) / 5000);
-    const green = Math.round(239 - ((239 - 39) * (5000 - Timer)) / 5000);
-    const blue = Math.round(216 - ((216 - 52) * (5000 - Timer)) / 5000);
+  const Return_TimerColor = () => {
+    const red = Math.round(213 - ((213 - 204) * (30 - time)) / 30);
+    const green = Math.round(239 - ((239 - 39) * (30 - time)) / 30);
+    const blue = Math.round(216 - ((216 - 52) * (30 - time)) / 30);
     return `rgba(${red}, ${green}, ${blue}, 255)`;
   };
 
@@ -406,22 +406,28 @@ const MainPage = () => {
   };
 
   // MAIN SECTION//
-
-  const State_SubmitPhase = async () => {
-    setGameState("round_phase");
-    setIsRunning(false);
+  const State_RoundPhase = async () => {
+    //4sec
+    setGameState("roundphase");
+    stopTimer();
     await Delay(2);
     setGameState("submit_phase");
-    ResetTimer();
+    resetTimer();
     await Delay(2);
-    setIsRunning(true);
-    // Wait for 30s this is 10s
-    await Delay(2);
-    State_DisplayWinnerPhase();
+    State_SubmitPhase();
   };
 
+  const State_SubmitPhase = async () => {
+    //30sec
+    startTimer();
+    // Wait for 30s
+    await Delay(31);
+    State_DisplayWinnerPhase();
+  };
+  //add next phase 1 sec
+
   const State_DisplayWinnerPhase = async () => {
-    await Delay(2);
+    //15sec + 1sec from preceding phase
     setGameState("static");
     await Delay(2);
     setGameState("kotae_phase");
@@ -457,24 +463,27 @@ const MainPage = () => {
       });
       await Delay(1);
       //Reset submit state
-      State_SubmitPhase();
+      State_RoundPhase();
     }
     //LOOP AGAIN
   };
 
   const State_ShowNewRule = async (NewRules) => {
+    // 15sec
     setGameState("none");
     await Delay(3);
     setGameState("rule_phase");
     setShowRules(NewRules);
-    await Delay(10);
+    await Delay(11);
     setGameState("none");
     await Delay(2);
   };
 
   React.useEffect(() => {
     if (G === 1) {
-      State_SubmitPhase();
+      setGameState("round_phase");
+      Delay(4);
+      State_RoundPhase();
     }
   }, [G]);
 
@@ -564,7 +573,7 @@ const MainPage = () => {
         className={Return_TimerState()}
         style={{ color: Return_TimerColor() }}
       >
-        {formatTime()}
+        {time.toFixed(2)}
       </div>
       <div className={Return_KotaeState()}>
         <p className="kotae">答え</p>
