@@ -440,6 +440,7 @@ const MainPage = () => {
     await Delay(3.5);
 
     if (NumberAlive.current === 2) {
+      await Delay(4)
       await State_Congratulation();
       // EXIT TO CONGRAT PHASE
     } else {
@@ -482,7 +483,6 @@ const MainPage = () => {
   React.useEffect(() => {
     if (G === 1) {
       setGameState("round_phase");
-      Delay(4);
       State_RoundPhase();
     }
   }, [G]);
