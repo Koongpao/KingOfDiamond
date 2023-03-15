@@ -20,13 +20,15 @@ const MainPage = () => {
   const [PlayerInfo, setPlayerInfo] = React.useState(
     Players.map(() => {
       return {
-        score: 10,
+        score: 0,
         alive: true,
         number: -1,
         connected: false,
       };
     })
   );
+
+  const [kotaeBoxShow, setKotaeBoxShow] = React.useState(false)
 
   const [OriginalState, setOriginalState] = React.useState([...Animation]);
 
@@ -58,7 +60,7 @@ const MainPage = () => {
   const RCConnected = React.useRef([0, 0, 0, 0, 0]);
   const [G, setG] = React.useState(0);
   const RCNumber = React.useRef([5, 4, 3, 2, 1]);
-  const RCScore = React.useRef([1, 1, 1, 1, 1]);
+  const RCScore = React.useRef([0, 0, -10, -10, -10]);
   const [RCKotae, setRCKotae] = React.useState(0);
   const RCWinner = React.useRef([1, 0, 0, 0, 0]);
 
@@ -136,7 +138,7 @@ const MainPage = () => {
       },
     });
     const data = await response.json();
-    console.log(data); // Log the server response
+    // console.log(data); // Log the server response
   };
 
   // END RECEIVED DATA SECTIONS
@@ -198,7 +200,7 @@ const MainPage = () => {
           //Check if is Winner
           return prevPlayerInfo;
         } else if (prevPlayerInfo.alive && prevPlayerInfo.connected) {
-          if (RCScore.current[i] === 0) {
+          if (RCScore.current[i] === -10) {
             //If dead on current round
             NumberAlive.current -= 1;
             IsAlive.current[i] = false;
@@ -350,7 +352,7 @@ const MainPage = () => {
   };
 
   const Return_KotaeState = () => {
-    if (GameState === "kotae_phase") {
+    if (GameState === "kotae_phase" && kotaeBoxShow) {
       return "kotaebox";
     } else {
       return "kotaebox hide";
@@ -421,41 +423,47 @@ const MainPage = () => {
     //30sec
     startTimer();
     // Wait for 30s
-    await Delay(31);
+    await Delay(1);//31
     State_DisplayWinnerPhase();
   };
   //add next phase 1 sec
 
   const State_DisplayWinnerPhase = async () => {
     //15sec + 1sec from preceding phase
+    console.log(NumberAlive)
     setGameState("static");
     await Delay(2);
     setGameState("kotae_phase");
-    await Delay(4);
+    await Delay(4) 
+    setKotaeBoxShow(prev => !prev)
+    await Delay(2);
     SetState_WinnerAnimation();
     await Delay(2);
     SetState_OnScoreChange();
     await Delay(0.5);
     SetState_CalculateNewScore();
-    await Delay(3.5);
+    await Delay(2.5);
 
-    if (NumberAlive.current === 2) {
+    console.log(NumberAlive)
+    if (NumberAlive.current === 1) {
       await Delay(4)
       await State_Congratulation();
       // EXIT TO CONGRAT PHASE
     } else {
       if (NumberAlive.current < PrevNumberAlive.current) {
         const NewRules = Array.from(
-          { length: PrevNumberAlive.current - NumberAlive.current - 1 },
+          { length: PrevNumberAlive.current - NumberAlive.current },
           (_, i) => NumberAlive.current + i + 1
         );
         PrevNumberAlive.current = NumberAlive.current;
+        console.log(NewRules)
         await State_ShowNewRule(NewRules);
       }
       // TRANSITION TO RULE PHASE
       setGameState("round_phase");
-      await Delay(2);
+      await Delay(1);
       setAnimation(OriginalState);
+      setKotaeBoxShow(prev => !prev)
       setPlayerInfo((prev) => {
         const newPrev = prev.map((eachPlayer) => {
           return { ...eachPlayer, number: -1 };
@@ -483,6 +491,15 @@ const MainPage = () => {
   React.useEffect(() => {
     if (G === 1) {
       setGameState("round_phase");
+      let aliveCount = 0;
+      PlayerInfo.forEach((a,i) => {
+        if(a.connected){
+          aliveCount++
+        }
+      })
+      NumberAlive.current = aliveCount
+      PrevNumberAlive.current = aliveCount
+      console.log(NumberAlive.current, PrevNumberAlive.current)
       State_RoundPhase();
     }
   }, [G]);
@@ -584,19 +601,19 @@ const MainPage = () => {
         {" "}
         <p>【 NEW RULE 】</p>{" "}
         {ShowRules.map((eachR) => {
-          if (eachR === 9) {
+          if (eachR === 4) {
             return (
               <p>
                 ④<br />
               </p>
             );
-          } else if (eachR === 7) {
+          } else if (eachR === 3) {
             return (
               <p>
                 ③<br />
               </p>
             );
-          } else if (eachR === 5) {
+          } else if (eachR === 2) {
             return (
               <p>
                 ②<br />
@@ -614,7 +631,7 @@ const MainPage = () => {
           alt="winner"
         />
         <p style={{ marginTop: "25vh" }}>GAME クリア </p>
-        <p>こんごらつちゅれいらしよん</p>
+        <p>こんごらっちゅれいらしよん</p>
       </div>
     </div>
   );
