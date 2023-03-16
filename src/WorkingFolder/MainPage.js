@@ -65,7 +65,7 @@ const MainPage = () => {
 
   const RCConnected = React.useRef([0, 0, 0, 0, 0]);
   const [G, setG] = React.useState(0);
-  const RCNumber = React.useRef([-1,-1,-1,-1,-1]);
+  const RCNumber = React.useRef([-1,0,-1,100,-1]);
   const RCScore = React.useRef([0, 0, 0, 0, 0]);
   const [RCKotae, setRCKotae] = React.useState(0);
   const RCWinner = React.useRef([0, 0, 0, 0, 0]);
@@ -436,7 +436,7 @@ const MainPage = () => {
     //30sec
     startTimer();
     // Wait for 30s
-    await Delay(31); //31
+    await Delay(1); //31
     State_DisplayWinnerPhase();
   };
   //add next phase 1 sec
@@ -444,6 +444,9 @@ const MainPage = () => {
   const State_DisplayWinnerPhase = async () => {
     //15sec + 1sec from preceding phase
     showKotae2Alive.current = true
+    setKotaeBoxShow(false)
+    //Back to original
+
     console.log(NumberAlive.current);
     setGameState("static");
     await Delay(2);
@@ -455,8 +458,9 @@ const MainPage = () => {
     }
     setGameState("kotae_phase");
     await Delay(4);
+    console.log("check" + showKotae2Alive.current)
     if (showKotae2Alive.current) {
-      setKotaeBoxShow((prev) => !prev);
+      setKotaeBoxShow(true);
     }
     await Delay(2);
     SetState_WinnerAnimation();
@@ -487,7 +491,7 @@ const MainPage = () => {
       setGameState("round_phase");
       await Delay(1);
       setAnimation(OriginalState);
-      setKotaeBoxShow((prev) => !prev);
+      setKotaeBoxShow(false);
       await Delay(1);
       //Reset submit state
       State_RoundPhase();
@@ -538,7 +542,7 @@ const MainPage = () => {
 
   return (
     <div className={Return_MainPage()}>
-      {/* <button onClick={() => setG(1)}>Start game</button>
+      <button onClick={() => setG(1)}>Start game</button>
       <button onClick={() => console.log(IsAlive.current)}>is alive</button>
       <button onClick={() => console.log(NumberAlive.current)}>
         check alive
@@ -578,7 +582,7 @@ const MainPage = () => {
         >
           s{i}
         </button>
-      ))} */}
+      ))}
       <div className={Return_AllPlayerHide()}>
         {Players.map((eachP, i) => (
           <div className={Return_IfRedBanner(i)}>
