@@ -63,10 +63,10 @@ const MainPage = () => {
 
   const RCConnected = React.useRef([0, 0, 0, 0, 0]);
   const [G, setG] = React.useState(0);
-  const RCNumber = React.useRef([-1,-1,-1,0,100]);
-  const RCScore = React.useRef([0, 0, 0, 0, 0]);
+  const RCNumber = React.useRef([-1,-1,-1,-1,-1]);
+  const RCScore = React.useRef([0, 0, -10, -10, 0]);
   const [RCKotae, setRCKotae] = React.useState(0);
-  const RCWinner = React.useRef([1, 0, 0, 0, 0]);
+  const RCWinner = React.useRef([0, 0, 0, 0, 0]);
 
   const filePath = "/GameData.json";
 
@@ -413,6 +413,12 @@ const MainPage = () => {
 
   // MAIN SECTION//
   const State_RoundPhase = async () => {
+    setPlayerInfo((prev) => {
+        const newPrev = prev.map((eachPlayer) => {
+          return { ...eachPlayer, number: -1 };
+        });
+        return newPrev;
+    });
     console.log(NumberAlive.current)
     //4sec
     setGameState("roundphase");
@@ -428,7 +434,7 @@ const MainPage = () => {
     //30sec
     startTimer();
     // Wait for 30s
-    await Delay(31); //31
+    await Delay(1); //31
     State_DisplayWinnerPhase();
   };
   //add next phase 1 sec
@@ -465,10 +471,12 @@ const MainPage = () => {
       if (NumberAlive.current < PrevNumberAlive.current) {
         const NewRules = Array.from(
           { length: PrevNumberAlive.current - NumberAlive.current },
-          (_, i) => NumberAlive.current + i + 1
+          (_, i) => NumberAlive.current + i
         );
         PrevNumberAlive.current = NumberAlive.current;
-        console.log(NewRules);
+        // console.log("RULES:")
+        // console.log(NumberAlive.current, PrevNumberAlive.current)
+        // console.log(NewRules);
         await State_ShowNewRule(NewRules);
       }
       // TRANSITION TO RULE PHASE
@@ -476,12 +484,6 @@ const MainPage = () => {
       await Delay(1);
       setAnimation(OriginalState);
       setKotaeBoxShow((prev) => !prev);
-      setPlayerInfo((prev) => {
-        const newPrev = prev.map((eachPlayer) => {
-          return { ...eachPlayer, number: -1 };
-        });
-        return newPrev;
-      });
       await Delay(1);
       //Reset submit state
       State_RoundPhase();
@@ -532,7 +534,7 @@ const MainPage = () => {
 
   return (
     <div className={Return_MainPage()}>
-      {/* <button onClick={() => setG(1)}>Start game</button>
+      <button onClick={() => setG(1)}>Start game</button>
       <button onClick={() => console.log(IsAlive.current)}>is alive</button>
       <button onClick={() => console.log(NumberAlive.current)}>
         check alive
@@ -572,7 +574,7 @@ const MainPage = () => {
         >
           s{i}
         </button>
-      ))} */}
+      ))}
       <div className={Return_AllPlayerHide()}>
         {Players.map((eachP, i) => (
           <div className={Return_IfRedBanner(i)}>
