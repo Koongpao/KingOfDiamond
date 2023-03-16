@@ -20,7 +20,7 @@ const MainPage = () => {
   const [PlayerInfo, setPlayerInfo] = React.useState(
     Players.map(() => {
       return {
-        score: 10,
+        score: 0,
         alive: true,
         number: -1,
         connected: false,
@@ -81,7 +81,7 @@ const MainPage = () => {
       // HANDLE G (GAME START)
 
       if (data.Avg !== null) {
-        setRCKotae(data.avg);
+        setRCKotae(data.Avg);
       }
       //HANDLE AVG (NUMBER OR KOTAE)
 
@@ -198,7 +198,7 @@ const MainPage = () => {
           //Check if is Winner
           return prevPlayerInfo;
         } else if (prevPlayerInfo.alive && prevPlayerInfo.connected) {
-          if (RCScore.current[i] === 0) {
+          if (RCScore.current[i] === -10) {
             //If dead on current round
             NumberAlive.current -= 1;
             IsAlive.current[i] = false;
