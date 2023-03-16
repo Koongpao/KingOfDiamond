@@ -28,9 +28,13 @@ const MainPage = () => {
     })
   );
 
+  const [kotaeBoxShow, setKotaeBoxShow] = React.useState(false);
+
   const [OriginalState, setOriginalState] = React.useState([...Animation]);
 
   const [GameState, setGameState] = React.useState("connect_phase");
+  // const [GameState, setGameState] = React.useState("rule_phase");
+
   // connect_phase รอผู้เล่น connect
   // round_phase grace period portrait ไม่มี animation
   // submit_phase รอผู้เล่น submit
@@ -49,6 +53,8 @@ const MainPage = () => {
   // Last Player Alive (won the game)
 
   const [ShowRules, setShowRules] = React.useState([]);
+  // const [ShowRules, setShowRules] = React.useState([4,3,2])
+
   // Show all rules
 
   const IsAlive = React.useRef([true, true, true, true, true]);
@@ -57,8 +63,8 @@ const MainPage = () => {
 
   const RCConnected = React.useRef([0, 0, 0, 0, 0]);
   const [G, setG] = React.useState(0);
-  const RCNumber = React.useRef([5, 4, 3, 2, 1]);
-  const RCScore = React.useRef([1, 1, 1, 1, 1]);
+  const RCNumber = React.useRef([-1,-1,-1,0,100]);
+  const RCScore = React.useRef([0, 0, 0, 0, 0]);
   const [RCKotae, setRCKotae] = React.useState(0);
   const RCWinner = React.useRef([1, 0, 0, 0, 0]);
 
@@ -68,7 +74,7 @@ const MainPage = () => {
     const fetchData = async () => {
       const response = await fetch(filePath);
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       if (data.WA !== null) {
         RCWinner.current = data.WA;
@@ -136,7 +142,7 @@ const MainPage = () => {
       },
     });
     const data = await response.json();
-    console.log(data); // Log the server response
+    // console.log(data); // Log the server response
   };
 
   // END RECEIVED DATA SECTIONS
@@ -161,16 +167,16 @@ const MainPage = () => {
 
   const startTimer = () => {
     setPaused(false);
-  }
+  };
 
   const stopTimer = () => {
     setPaused(true);
-  }
+  };
 
   const resetTimer = () => {
     setTime(30.0);
     setPaused(true);
-  }
+  };
 
   // Animation and Calculation Section //
 
@@ -294,13 +300,13 @@ const MainPage = () => {
 
   const Return_ScoreColor = (i) => {
     const red = Math.round(
-      213 - ((213 - 204) * (10 - PlayerInfo[i].score)) / 10
+      213 - ((213 - 204) * (- PlayerInfo[i].score)) / 10
     );
     const green = Math.round(
-      239 - ((239 - 39) * (10 - PlayerInfo[i].score)) / 10
+      239 - ((239 - 39) * (- PlayerInfo[i].score)) / 10
     );
     const blue = Math.round(
-      216 - ((216 - 52) * (10 - PlayerInfo[i].score)) / 10
+      216 - ((216 - 52) * (- PlayerInfo[i].score)) / 10
     );
     return `rgba(${red}, ${green}, ${blue}, 255)`;
   };
@@ -350,7 +356,7 @@ const MainPage = () => {
   };
 
   const Return_KotaeState = () => {
-    if (GameState === "kotae_phase") {
+    if (GameState === "kotae_phase" && kotaeBoxShow) {
       return "kotaebox";
     } else {
       return "kotaebox hide";
@@ -407,6 +413,7 @@ const MainPage = () => {
 
   // MAIN SECTION//
   const State_RoundPhase = async () => {
+    console.log(NumberAlive.current)
     //4sec
     setGameState("roundphase");
     stopTimer();
@@ -421,41 +428,54 @@ const MainPage = () => {
     //30sec
     startTimer();
     // Wait for 30s
-    await Delay(31);
+    await Delay(31); //31
     State_DisplayWinnerPhase();
   };
   //add next phase 1 sec
 
   const State_DisplayWinnerPhase = async () => {
     //15sec + 1sec from preceding phase
+    console.log(NumberAlive.current);
     setGameState("static");
     await Delay(2);
+    let showKotae2Alive = true;
+    if (NumberAlive.current === 2 && RCNumber.current.every((elem) => [0, 100, -1].includes(elem))) {
+      console.log("special rule: don't show kotae")
+      showKotae2Alive = false;
+    }
     setGameState("kotae_phase");
     await Delay(4);
+    if (showKotae2Alive) {
+      setKotaeBoxShow((prev) => !prev);
+    }
+    await Delay(2);
     SetState_WinnerAnimation();
     await Delay(2);
     SetState_OnScoreChange();
     await Delay(0.5);
     SetState_CalculateNewScore();
-    await Delay(3.5);
+    await Delay(2.5);
 
-    if (NumberAlive.current === 2) {
-      await Delay(4)
+    console.log(NumberAlive);
+    if (NumberAlive.current === 1) {
+      await Delay(4);
       await State_Congratulation();
       // EXIT TO CONGRAT PHASE
     } else {
       if (NumberAlive.current < PrevNumberAlive.current) {
         const NewRules = Array.from(
-          { length: PrevNumberAlive.current - NumberAlive.current - 1 },
+          { length: PrevNumberAlive.current - NumberAlive.current },
           (_, i) => NumberAlive.current + i + 1
         );
         PrevNumberAlive.current = NumberAlive.current;
+        console.log(NewRules);
         await State_ShowNewRule(NewRules);
       }
       // TRANSITION TO RULE PHASE
       setGameState("round_phase");
-      await Delay(2);
+      await Delay(1);
       setAnimation(OriginalState);
+      setKotaeBoxShow((prev) => !prev);
       setPlayerInfo((prev) => {
         const newPrev = prev.map((eachPlayer) => {
           return { ...eachPlayer, number: -1 };
@@ -483,6 +503,14 @@ const MainPage = () => {
   React.useEffect(() => {
     if (G === 1) {
       setGameState("round_phase");
+      let aliveCount = 0;
+      PlayerInfo.forEach((a, i) => {
+        if (a.connected) {
+          aliveCount++;
+        }
+      });
+      NumberAlive.current = aliveCount;
+      PrevNumberAlive.current = aliveCount;
       State_RoundPhase();
     }
   }, [G]);
@@ -492,7 +520,7 @@ const MainPage = () => {
     await Delay(2);
     setGameState("congrat_phase");
     IsAlive.current.forEach((item, i) => {
-      if (item) {
+      if (item && PlayerInfo[i].connected) {
         console.log(item);
         console.log(item.alive, i);
         setPlayerCongrat(i);
@@ -504,7 +532,8 @@ const MainPage = () => {
 
   return (
     <div className={Return_MainPage()}>
-      <button onClick={() => setG(1)}>Start game</button>
+      {/* <button onClick={() => setG(1)}>Start game</button>
+      <button onClick={() => console.log(IsAlive.current)}>is alive</button>
       <button onClick={() => console.log(NumberAlive.current)}>
         check alive
       </button>
@@ -543,7 +572,7 @@ const MainPage = () => {
         >
           s{i}
         </button>
-      ))}
+      ))} */}
       <div className={Return_AllPlayerHide()}>
         {Players.map((eachP, i) => (
           <div className={Return_IfRedBanner(i)}>
@@ -582,24 +611,30 @@ const MainPage = () => {
       <div className="corner-text">K♦</div>
       <div className={Return_ShowRule()}>
         {" "}
-        <p>【 NEW RULE 】</p>{" "}
+        <p style={{ textAlign: "center" }}>【 NEW RULE 】</p>{" "}
         {ShowRules.map((eachR) => {
-          if (eachR === 9) {
+          if (eachR === 4) {
             return (
-              <p>
-                ④<br />
+              <p style={{ fontSize: "5vh" }}>
+                ④ If there are 2 people or more choose the same number, the
+                number they choose becomes invalid.
+                <br />
               </p>
             );
-          } else if (eachR === 7) {
+          } else if (eachR === 3) {
             return (
-              <p>
-                ③<br />
+              <p style={{ fontSize: "5vh" }}>
+                ③ If there is a person who chooses the exact correct number, the
+                loser penalty is doubled.
+                <br />
               </p>
             );
-          } else if (eachR === 5) {
+          } else if (eachR === 2) {
             return (
-              <p>
-                ②<br />
+              <p style={{ fontSize: "5vh" }}>
+                ② If someone chooses 0, the player who chooses 100 is the
+                winner.
+                <br />
               </p>
             );
           } else {
@@ -614,7 +649,7 @@ const MainPage = () => {
           alt="winner"
         />
         <p style={{ marginTop: "25vh" }}>GAME クリア </p>
-        <p>こんごらつちゅれいらしよん</p>
+        <p>こんごらっちゅれいらしよん</p>
       </div>
     </div>
   );
