@@ -87,7 +87,7 @@ const MainPage = () => {
       // HANDLE G (GAME START)
 
       if (data.Avg !== null) {
-        setRCKotae(data.avg);
+        setRCKotae(data.Avg);
       }
       //HANDLE AVG (NUMBER OR KOTAE)
 
