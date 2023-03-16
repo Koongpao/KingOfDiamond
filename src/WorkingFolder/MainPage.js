@@ -436,7 +436,7 @@ const MainPage = () => {
     //30sec
     startTimer();
     // Wait for 30s
-    await Delay(1); //31
+    await Delay(31); //31
     State_DisplayWinnerPhase();
   };
   //add next phase 1 sec
@@ -542,7 +542,7 @@ const MainPage = () => {
 
   return (
     <div className={Return_MainPage()}>
-      <button onClick={() => setG(1)}>Start game</button>
+      {/* <button onClick={() => setG(1)}>Start game</button>
       <button onClick={() => console.log(IsAlive.current)}>is alive</button>
       <button onClick={() => console.log(NumberAlive.current)}>
         check alive
@@ -582,7 +582,7 @@ const MainPage = () => {
         >
           s{i}
         </button>
-      ))}
+      ))} */}
       <div className={Return_AllPlayerHide()}>
         {Players.map((eachP, i) => (
           <div className={Return_IfRedBanner(i)}>
